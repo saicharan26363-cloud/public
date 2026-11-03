@@ -1,0 +1,124 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile and emergency preferences",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "displayName": { "type": "string" },
+        "email": { "type": "string" },
+        "phone": { "type": "string" },
+        "role": { "type": "string", "enum": ["user", "trusted_contact", "admin"] },
+        "bloodGroup": { "type": "string" },
+        "emergencyNotes": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" },
+        "safeJourneyEnabled": { "type": "boolean" }
+      },
+      "required": ["uid", "email", "role"]
+    },
+    "Emergency": {
+      "title": "Emergency",
+      "description": "Emergency incident record",
+      "type": "object",
+      "properties": {
+        "emergencyId": { "type": "string" },
+        "userId": { "type": "string" },
+        "userName": { "type": "string" },
+        "type": { "type": "string" },
+        "status": { "type": "string", "enum": ["active", "acknowledged", "resolved"] },
+        "triggerSource": { "type": "string" },
+        "latitude": { "type": "number" },
+        "longitude": { "type": "number" },
+        "accuracy": { "type": "number" },
+        "address": { "type": "string" },
+        "aiRiskLevel": { "type": "string", "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"] },
+        "aiSummary": { "type": "string" },
+        "demo": { "type": "boolean" },
+        "createdAt": { "type": "string" },
+        "acknowledgedAt": { "type": "string" },
+        "resolvedAt": { "type": "string" },
+        "responderNotes": { "type": "string" }
+      },
+      "required": ["emergencyId", "userId", "type", "status", "createdAt"]
+    },
+    "TrustedContact": {
+      "title": "TrustedContact",
+      "description": "Family and trusted emergency contact",
+      "type": "object",
+      "properties": {
+        "contactId": { "type": "string" },
+        "ownerId": { "type": "string" },
+        "name": { "type": "string" },
+        "relationship": { "type": "string" },
+        "phone": { "type": "string" },
+        "email": { "type": "string" },
+        "telegramChatId": { "type": "string" },
+        "priority": { "type": "string", "enum": ["Primary", "Secondary", "Tertiary"] },
+        "active": { "type": "boolean" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["contactId", "ownerId", "name", "phone", "priority"]
+    },
+    "Evidence": {
+      "title": "Evidence",
+      "description": "Captured emergency media and sensor data",
+      "type": "object",
+      "properties": {
+        "evidenceId": { "type": "string" },
+        "emergencyId": { "type": "string" },
+        "userId": { "type": "string" },
+        "type": { "type": "string", "enum": ["photo", "audio", "sensor_log"] },
+        "fileName": { "type": "string" },
+        "fileUrl": { "type": "string" },
+        "fileData": { "type": "string" },
+        "fileSize": { "type": "number" },
+        "mimeType": { "type": "string" },
+        "hash": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "processingStatus": { "type": "string" }
+      },
+      "required": ["evidenceId", "emergencyId", "userId", "type", "createdAt"]
+    },
+    "SafeJourney": {
+      "title": "SafeJourney",
+      "description": "Safe journey monitoring and check-ins",
+      "type": "object",
+      "properties": {
+        "journeyId": { "type": "string" },
+        "userId": { "type": "string" },
+        "destination": { "type": "string" },
+        "startLocation": { "type": "string" },
+        "expectedArrival": { "type": "string" },
+        "checkInIntervalMinutes": { "type": "number" },
+        "status": { "type": "string", "enum": ["in_progress", "completed", "escalated", "missed_checkin"] },
+        "createdAt": { "type": "string" },
+        "completedAt": { "type": "string" }
+      },
+      "required": ["journeyId", "userId", "destination", "expectedArrival", "status"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User profile documents"
+    },
+    "/emergencies/{emergencyId}": {
+      "schema": "Emergency",
+      "description": "Emergency incident collection"
+    },
+    "/trustedContacts/{contactId}": {
+      "schema": "TrustedContact",
+      "description": "Trusted emergency contacts collection"
+    },
+    "/evidence/{evidenceId}": {
+      "schema": "Evidence",
+      "description": "Captured emergency evidence files and metadata"
+    },
+    "/safeJourneys/{journeyId}": {
+      "schema": "SafeJourney",
+      "description": "Safe journey tracking sessions"
+    }
+  }
+}

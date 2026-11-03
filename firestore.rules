@@ -1,0 +1,51 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    // User profile rules
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow write: if isOwner(userId);
+    }
+    
+    // Emergencies: Owner can create/read/update; Authenticated trusted contacts & responders can read
+    match /emergencies/{emergencyId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated();
+      allow delete: if isAuthenticated() && (resource.data.userId == request.auth.uid);
+    }
+    
+    // Trusted contacts: Only owner can manage their contacts list
+    match /trustedContacts/{contactId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && (request.resource.data.ownerId == request.auth.uid || resource.data.ownerId == request.auth.uid);
+    }
+    
+    // Evidence collection
+    match /evidence/{evidenceId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow delete: if isAuthenticated() && (resource.data.userId == request.auth.uid);
+    }
+    
+    // Safe Journey sessions
+    match /safeJourneys/{journeyId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated();
+    }
+    
+    // Fallback: Deny unauthenticated access
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

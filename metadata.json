@@ -1,0 +1,12 @@
+{
+  "name": "GuardianBand AI",
+  "description": "Intelligent Wearable for Emergency Detection, Evidence Collection & Real-Time Rescue Assistance.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "geolocation"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
